@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Audience Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #fbf7f4;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(49, 119, 115, 0.1);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      color: #317773;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      color: #333;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #317773;
+      box-shadow: 0 0 0 3px rgba(49, 119, 115, 0.1);
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+    }
+
+    /* Campaign rows */
+    .campaigns-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .campaigns-section > label {
+      margin-bottom: 1rem;
+    }
+
+    .campaign-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+    }
+
+    .campaign-row .campaign-inputs {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .campaign-row input[type="text"] {
+      background: #fff;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .file-input-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: #fff;
+      border: 1px dashed #ccc;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #666;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .file-input-wrapper:hover .file-input-label {
+      border-color: #317773;
+      background-color: rgba(49, 119, 115, 0.02);
+    }
+
+    .file-input-label.has-file {
+      border-style: solid;
+      border-color: #317773;
+      color: #317773;
+    }
+
+    .file-input-label svg {
+      flex-shrink: 0;
+    }
+
+    .remove-campaign {
+      padding: 0.5rem;
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: color 0.2s, background-color 0.2s;
+      margin-top: 0.25rem;
+    }
+
+    .remove-campaign:hover {
+      color: #dc2626;
+      background-color: #fef2f2;
+    }
+
+    .add-campaign-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: none;
+      border: 1px dashed #317773;
+      border-radius: 8px;
+      color: #317773;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      width: 100%;
+    }
+
+    .add-campaign-btn:hover {
+      background-color: rgba(49, 119, 115, 0.05);
+    }
+
+    /* Advanced section */
+    .advanced-section {
+      margin-bottom: 1.5rem;
+      border: 1px solid #eee;
+      border-radius: 8px;
+    }
+
+    .advanced-section summary {
+      padding: 0.875rem 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .advanced-section summary:hover {
+      color: #317773;
+    }
+
+    .advanced-section[open] summary {
+      border-bottom: 1px solid #eee;
+    }
+
+    .advanced-content {
+      padding: 1rem;
+    }
+
+    .advanced-content .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .advanced-content input[type="text"] {
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+
+    /* Submit button */
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      background-color: #317773;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #285f5c;
+    }
+
+    button[type="submit"]:active {
+      transform: scale(0.98);
+    }
+
+    button[type="submit"]:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Status messages */
+    .status {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    .status.success {
+      display: block;
+      background-color: rgba(49, 119, 115, 0.1);
+      color: #317773;
+    }
+
+    .status.error {
+      display: block;
+      background-color: #fef2f2;
+      color: #dc2626;
+    }
+
+    </style>
+</head>
+<body>
+  <div class="container">
+    <h1>LinkedIn Audience Report</h1>
+    <p class="subtitle">Upload demographics CSVs from LinkedIn Campaign Manager to generate an audience analysis report.</p>
+
+    <form id="reportForm">
+      <div class="form-group">
+        <label for="clientName">Client Name</label>
+        <input type="text" id="clientName" name="clientName" placeholder="e.g. Acme Corp" required>
+      </div>
+
+      <div class="campaigns-section">
+        <label>Campaigns</label>
+        <div id="campaignRows"></div>
+        <button type="button" class="add-campaign-btn" id="addCampaignBtn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="3" x2="8" y2="13"></line>
+            <line x1="3" y1="8" x2="13" y2="8"></line>
+          </svg>
+          Add Another Campaign
+        </button>
+      </div>
+
+      <details class="advanced-section">
+        <summary>Advanced Options</summary>
+        <div class="advanced-content">
+          <div class="form-group">
+            <label for="additionalInstructions">Additional Instructions</label>
+            <textarea id="additionalInstructions" name="additionalInstructions" placeholder="e.g. Be stricter with job titles, this client has a narrow ICP..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="maxRowsPerSegment">Max Rows per Segment</label>
+            <input type="text" id="maxRowsPerSegment" name="maxRowsPerSegment" value="25" placeholder="25">
+          </div>
+
+          <div class="form-group">
+            <label for="webhookUrl">Relay Webhook URL</label>
+            <input type="text" id="webhookUrl" name="webhookUrl" value="https://hook.relay.app/api/v1/playbook/cml1de34601fm0okl3wtwc28w/trigger/VQ9ZXcc8rttPnuBTuL2O8A">
+          </div>
+        </div>
+      </details>
+
+      <button type="submit" id="submitBtn">Generate Report</button>
+
+      <div class="status" id="status"></div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('reportForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const status = document.getElementById('status');
+    const campaignRowsContainer = document.getElementById('campaignRows');
+    const addCampaignBtn = document.getElementById('addCampaignBtn');
+
+    let campaignCounter = 0;
+
+    // Segment header identifiers (ones we want to extract)
+    const SEGMENT_HEADERS = {
+      'company_name': 'Company Name Segment',
+      'company_industry': 'Company Industry Segment',
+      'company_size': 'Company Size Segment',
+      'job_seniority': 'Job Seniority Segment',
+      'job_title': 'Job Title Segment',
+      'job_function': 'Job Function Segment'
+    };
+
+    // All possible segment headers in LinkedIn CSVs (used to detect section boundaries)
+    const ALL_SEGMENT_HEADERS = [
+      'Company Name Segment',
+      'Company Industry Segment', 
+      'Company Size Segment',
+      'Job Seniority Segment',
+      'Job Title Segment',
+      'Job Function Segment',
+      'Contextual Country/Region Segment',
+      'County Segment',
+      'Member Age Segment',
+      'Member Gender Segment',
+      'Member Skills Segment',
+      'Member Groups Segment',
+      'Member Schools Segment',
+      'Member Degrees Segment',
+      'Member Fields Of Study Segment'
+    ];
+
+    // Create campaign row HTML
+    function createCampaignRow(index) {
+      const row = document.createElement('div');
+      row.className = 'campaign-row';
+      row.dataset.index = index;
+      row.innerHTML = `
+        <div class="campaign-inputs">
+          <input type="text" 
+                 name="campaignName_${index}" 
+                 placeholder="Campaign name (e.g. EMEA Awareness Q4)" 
+                 required>
+          <div class="file-input-wrapper">
+            <input type="file" 
+                   name="campaignFile_${index}" 
+                   accept=".csv" 
+                   required>
+            <div class="file-input-label">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M8 10V3M8 3L5 6M8 3L11 6"></path>
+                <path d="M2 10v3a1 1 0 001 1h10a1 1 0 001-1v-3"></path>
+              </svg>
+              <span>Choose demographics CSV...</span>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="remove-campaign" title="Remove campaign">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="4" x2="12" y2="12"></line>
+            <line x1="12" y1="4" x2="4" y2="12"></line>
+          </svg>
+        </button>
+      `;
+
+      // File input change handler
+      const fileInput = row.querySelector('input[type="file"]');
+      const fileLabel = row.querySelector('.file-input-label span');
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+          fileLabel.textContent = fileInput.files[0].name;
+          fileInput.closest('.file-input-wrapper').querySelector('.file-input-label').classList.add('has-file');
+        } else {
+          fileLabel.textContent = 'Choose demographics CSV...';
+          fileInput.closest('.file-input-wrapper').querySelector('.file-input-label').classList.remove('has-file');
+        }
+      });
+
+      // Remove button handler
+      const removeBtn = row.querySelector('.remove-campaign');
+      removeBtn.addEventListener('click', () => {
+        row.remove();
+        updateRemoveButtons();
+      });
+
+      return row;
+    }
+
+    // Update remove button visibility (hide if only one row)
+    function updateRemoveButtons() {
+      const rows = campaignRowsContainer.querySelectorAll('.campaign-row');
+      rows.forEach(row => {
+        const removeBtn = row.querySelector('.remove-campaign');
+        removeBtn.style.visibility = rows.length > 1 ? 'visible' : 'hidden';
+      });
+    }
+
+    // Add campaign row
+    function addCampaignRow() {
+      const row = createCampaignRow(campaignCounter++);
+      campaignRowsContainer.appendChild(row);
+      updateRemoveButtons();
+    }
+
+    // Initialize with one row
+    addCampaignRow();
+
+    // Add campaign button handler
+    addCampaignBtn.addEventListener('click', addCampaignRow);
+
+    // Read file as ArrayBuffer and decode UTF-16
+    function readFileAsText(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const buffer = e.target.result;
+          const bytes = new Uint8Array(buffer);
+          
+          // Check for UTF-16 LE BOM (FF FE)
+          if (bytes[0] === 0xFF && bytes[1] === 0xFE) {
+            const decoder = new TextDecoder('utf-16le');
+            resolve(decoder.decode(buffer));
+          } 
+          // Check for UTF-16 BE BOM (FE FF)
+          else if (bytes[0] === 0xFE && bytes[1] === 0xFF) {
+            const decoder = new TextDecoder('utf-16be');
+            resolve(decoder.decode(buffer));
+          }
+          // Assume UTF-8
+          else {
+            const decoder = new TextDecoder('utf-8');
+            resolve(decoder.decode(buffer));
+          }
+        };
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    // Parse LinkedIn demographics CSV
+    function parseLinkedInCSV(text, campaignName, selectedSegments, maxRows) {
+      const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+      
+      // Extract date range from header rows
+      let dateRange = { start: null, end: null };
+      for (const line of lines.slice(0, 5)) {
+        const startMatch = line.match(/Report Start:\s*(.+?)"/);
+        const endMatch = line.match(/Report End:\s*(.+?)"/);
+        if (startMatch) dateRange.start = startMatch[1].trim();
+        if (endMatch) dateRange.end = endMatch[1].trim();
+      }
+
+      // Detect campaign type by checking first data row's metrics
+      // Impressions col (index 1) vs Sends col (index 9)
+      let campaignType = 'awareness'; // default
+      for (const line of lines) {
+        // Find first data row after a segment header
+        if (ALL_SEGMENT_HEADERS.some(h => line.startsWith(h + '\t'))) continue;
+        const values = line.split('\t');
+        if (values.length > 10 && values[0] && !values[0].includes('Segment')) {
+          const impressions = parseNumber(values[1]);
+          const sends = parseNumber(values[9]);
+          if (sends > 0 && impressions === 0) {
+            campaignType = 'conversation';
+          }
+          break;
+        }
+      }
+
+      // Find all segment sections
+      const segments = {};
+      let currentSegment = null;
+      let currentHeaders = [];
+      let currentRows = [];
+
+      for (const line of lines) {
+        // Check if this line is ANY segment header (used for boundary detection)
+        const isAnySegmentHeader = ALL_SEGMENT_HEADERS.some(header => line.startsWith(header + '\t'));
+        
+        // Check if this line is a segment header we want to extract
+        let foundSegment = null;
+        for (const [segmentKey, segmentHeader] of Object.entries(SEGMENT_HEADERS)) {
+          if (line.startsWith(segmentHeader + '\t')) {
+            foundSegment = segmentKey;
+            break;
+          }
+        }
+
+        if (isAnySegmentHeader) {
+          // Save previous segment if exists and we want it
+          if (currentSegment && selectedSegments.includes(currentSegment)) {
+            segments[currentSegment] = currentRows.slice(0, maxRows);
+          }
+          
+          if (foundSegment) {
+            // Start new segment we want to extract
+            currentSegment = foundSegment;
+            currentHeaders = line.split('\t');
+            currentRows = [];
+          } else {
+            // This is a segment header we don't want - reset state
+            currentSegment = null;
+            currentHeaders = [];
+            currentRows = [];
+          }
+        } 
+        else if (currentSegment) {
+          const values = line.split('\t');
+          
+          // Empty row (just tabs) signals end of section
+          if (values.every(v => v === '')) {
+            if (selectedSegments.includes(currentSegment)) {
+              segments[currentSegment] = currentRows.slice(0, maxRows);
+            }
+            currentSegment = null;
+            currentHeaders = [];
+            currentRows = [];
+            continue;
+          }
+
+          // Parse data row
+          if (values[0] && currentHeaders.length > 0) {
+            const row = parseDataRow(currentHeaders, values);
+            if (row) {
+              currentRows.push(row);
+            }
+          }
+        }
+      }
+
+      // Don't forget last segment
+      if (currentSegment && selectedSegments.includes(currentSegment)) {
+        segments[currentSegment] = currentRows.slice(0, maxRows);
+      }
+
+      return {
+        campaignName,
+        campaignType,
+        dateRange,
+        segments
+      };
+    }
+
+    // Parse a single data row
+    function parseDataRow(headers, values) {
+      // Column indices (0-based)
+      const segmentIdx = 0;
+      const impressionsIdx = 1;
+      const pctImpressionsIdx = 2;
+      const clicksIdx = 3;
+      const pctClicksIdx = 4;
+      const conversionsIdx = 6;
+      const pctConversionsIdx = 7;
+      const conversionRateIdx = 8;
+      const sendsIdx = 9;
+      const pctSendsIdx = 10;
+      const opensIdx = 11;
+      const pctOpensIdx = 12;
+
+      const segmentValue = values[segmentIdx]?.replace(/^"|"$/g, '').trim();
+      if (!segmentValue) return null;
+
+      const impressions = parseNumber(values[impressionsIdx]);
+      const sends = parseNumber(values[sendsIdx]);
+      
+      // Conversions are the same columns for both campaign types
+      const conversions = parseNumber(values[conversionsIdx]);
+      const conversionsPct = formatPct(values[pctConversionsIdx]);
+      const conversionRate = formatPct(values[conversionRateIdx]);
+
+      // Determine which metrics to use (awareness vs conversation)
+      const isAwareness = impressions > 0 || sends === 0;
+
+      if (isAwareness) {
+        const volume = impressions;
+        const engagements = parseNumber(values[clicksIdx]);
+        const engagementRate = volume > 0 ? (engagements / volume) * 100 : 0;
+        
+        return {
+          segment: segmentValue,
+          volume: volume,
+          volumePct: formatPct(values[pctImpressionsIdx]),
+          engagements: engagements,
+          engagementsPct: formatPct(values[pctClicksIdx]),
+          engagementRate: engagementRate.toFixed(1) + '%',
+          conversions: conversions,
+          conversionsPct: conversionsPct,
+          conversionRate: conversionRate
+        };
+      } else {
+        const volume = sends;
+        const engagements = parseNumber(values[opensIdx]);
+        const engagementRate = volume > 0 ? (engagements / volume) * 100 : 0;
+        
+        return {
+          segment: segmentValue,
+          volume: volume,
+          volumePct: formatPct(values[pctSendsIdx]),
+          engagements: engagements,
+          engagementsPct: formatPct(values[pctOpensIdx]),
+          engagementRate: engagementRate.toFixed(1) + '%',
+          conversions: conversions,
+          conversionsPct: conversionsPct,
+          conversionRate: conversionRate
+        };
+      }
+    }
+
+    // Format percentage to 1 decimal place
+    function formatPct(value) {
+      if (!value) return '0.0%';
+      const num = parseFloat(value.toString().replace(/[,%]/g, '').trim());
+      if (isNaN(num)) return '0.0%';
+      return num.toFixed(1) + '%';
+    }
+
+    // Parse number from string
+    function parseNumber(value) {
+      if (!value) return 0;
+      const cleaned = value.toString().replace(/[,%]/g, '').trim();
+      const num = parseFloat(cleaned);
+      return isNaN(num) ? 0 : num;
+    }
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const webhookUrl = document.getElementById('webhookUrl').value.trim();
+      const clientName = document.getElementById('clientName').value.trim();
+      const maxRows = parseInt(document.getElementById('maxRowsPerSegment').value) || 25;
+      const additionalInstructions = document.getElementById('additionalInstructions').value.trim();
+
+      // All segments always included
+      const selectedSegments = ['company_name', 'company_industry', 'company_size', 'job_seniority', 'job_title', 'job_function'];
+
+      // Get all campaign rows
+      const campaignRows = campaignRowsContainer.querySelectorAll('.campaign-row');
+      if (campaignRows.length === 0) {
+        showStatus('Please add at least one campaign', 'error');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+
+      try {
+        const campaigns = [];
+
+        for (const row of campaignRows) {
+          const index = row.dataset.index;
+          const nameInput = row.querySelector(`input[name="campaignName_${index}"]`);
+          const fileInput = row.querySelector(`input[name="campaignFile_${index}"]`);
+
+          if (!nameInput.value.trim()) {
+            throw new Error('Please enter a name for all campaigns');
+          }
+
+          if (!fileInput.files.length) {
+            throw new Error('Please select a CSV file for all campaigns');
+          }
+
+          const campaignName = nameInput.value.trim();
+          const file = fileInput.files[0];
+
+          // Read and parse file
+          const text = await readFileAsText(file);
+          const parsed = parseLinkedInCSV(text, campaignName, selectedSegments, maxRows);
+          
+          // Extract campaign ID from filename if present
+          const idMatch = file.name.match(/campaign_(\d+)/);
+          if (idMatch) {
+            parsed.campaignId = idMatch[1];
+          }
+
+          campaigns.push(parsed);
+        }
+
+        // Build payload
+        const payload = {
+          clientName,
+          generatedAt: new Date().toISOString(),
+          additionalInstructions: additionalInstructions || null,
+          campaigns
+        };
+
+        // Send to webhook
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Webhook returned ${response.status}`);
+        }
+
+        const totalRows = campaigns.reduce((sum, c) => {
+          return sum + Object.values(c.segments).reduce((s, rows) => s + rows.length, 0);
+        }, 0);
+
+        showStatus(
+          `Submitted ${campaigns.length} campaign(s) with ${totalRows} total segment rows for ${clientName}. Check Slack for results.`,
+          'success'
+        );
+
+      } catch (err) {
+        showStatus(`Error: ${err.message}`, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Generate Report';
+      }
+    });
+
+    function showStatus(message, type) {
+      status.textContent = message;
+      status.className = `status ${type}`;
+    }
+  </script>
+</body>
+</html>
